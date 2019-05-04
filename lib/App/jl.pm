@@ -1,15 +1,106 @@
 package App::jl;
 use strict;
 use warnings;
-use Carp qw/croak/;
+use JSON qw/decode_json to_json/;
+use Sub::Data::Recursive;
+use Getopt::Long qw/GetOptionsFromArray/;
 
 our $VERSION = '0.01';
 
+my $MAX_DEPTH = 10;
+
 sub new {
     my $class = shift;
-    my $args  = shift || +{};
+    my @argv  = @_;
 
-    bless $args, $class;
+    bless {
+        _opt => $class->_parse_opt(@argv),
+    }, $class;
+}
+
+sub opt {
+    my ($self, $key) = @_;
+
+    return $self->{_opt}{$key};
+}
+
+sub run {
+    my ($self) = @_;
+
+    while (my $orig_line = <STDIN>) {
+        print $self->process($orig_line);
+    }
+}
+
+sub process {
+    my ($self, $line) = @_;print $self->opt('depth') . "\n";
+
+    my $decoded;
+    eval {
+        $decoded = decode_json($line);
+    };
+    if ($@) {
+        return $line;
+    }
+    else {
+        $self->{_depth} = $self->opt('depth');
+        $self->_recursive_decode_json($decoded);
+        return to_json($decoded, {pretty => !$self->opt('no_pretty')});
+    }
+}
+
+sub _recursive_decode_json {
+    my ($self, $hash) = @_;
+
+    Sub::Data::Recursive->invoke(
+        sub {
+            my $line = $_[0];
+
+            if ($self->{_depth} > 0) {
+                my $h;
+                eval {
+                    $h = decode_json($line);
+                };
+                if (!$@) {
+
+                    $self->{_depth}--;
+                    $_[0] = $h;
+                    $self->_recursive_decode_json($_[0]);
+                }
+            }
+        },
+        $hash
+    );
+}
+
+sub _parse_opt {
+    my ($class, @argv) = @_;
+
+    my $opt = {};
+
+    GetOptionsFromArray(
+        \@argv,
+        'depth=s'   => \$opt->{depth},
+        'no-pretty' => \$opt->{no_pretty},
+        'h|help'    => sub {
+            $class->_show_usage(1);
+        },
+        'v|version' => sub {
+            print "$0 $VERSION\n";
+            exit 1;
+        },
+    ) or $class->_show_usage(2);
+
+    $opt->{depth} ||= $MAX_DEPTH;
+
+    return $opt;
+}
+
+sub _show_usage {
+    my ($class, $exitval) = @_;
+
+    require Pod::Usage;
+    Pod::Usage::pod2usage(-exitval => $exitval);
 }
 
 1;
@@ -20,7 +111,7 @@ __END__
 
 =head1 NAME
 
-App::jl - one line description
+App::jl - Recursive JSON decoder
 
 
 =head1 SYNOPSIS
@@ -30,7 +121,9 @@ App::jl - one line description
 
 =head1 DESCRIPTION
 
-App::jl is
+App::jl is recursive JSON decoder. This module can decode JSON in JSON.
+
+See L<jl> for CLI to view logs.
 
 
 =head1 REPOSITORY
@@ -53,7 +146,7 @@ Dai Okabayashi E<lt>bayashi@cpan.orgE<gt>
 
 =head1 SEE ALSO
 
-L<Other::Module>
+L<jl>
 
 
 =head1 LICENSE

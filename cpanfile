@@ -3,7 +3,10 @@
 requires 'perl', '5.008005';
 requires 'strict';
 requires 'warnings';
-requires 'Carp';
+requires 'JSON';
+requires 'Sub::Data::Recursive';
+requires 'Getopt::Long';
+requires 'Pod::Usage';
 
 on 'test' => sub {
     requires 'Test::More', '0.88';
