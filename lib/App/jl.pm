@@ -62,7 +62,6 @@ sub _recursive_decode_json {
                     $h = decode_json($line);
                 };
                 if (!$@) {
-
                     $self->{_depth}--;
                     $_[0] = $h;
                     $self->_recursive_decode_json($_[0]);
