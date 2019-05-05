@@ -46,7 +46,7 @@
    "provides" : {
       "App::jl" : {
          "file" : "lib/App/jl.pm",
-         "version" : "0.01"
+         "version" : "0.02"
       }
    },
    "release_status" : "stable",
@@ -61,6 +61,6 @@
          "url" : "http://github.com/bayashi/App-jl"
       }
    },
-   "version" : "0.01",
+   "version" : "0.02",
    "x_serialization_backend" : "JSON::PP version 2.97001"
 }

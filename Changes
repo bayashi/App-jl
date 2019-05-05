@@ -1,4 +1,8 @@
 Revision history for Perl extension App::jl
 
-0.01    Sun May 5 2:9:15 JST 2019
+0.02    Sun May  5 12:40:09 JST 2019
+        - Fix test
+        - Fix docs
+
+0.01    Sun May  5 02:09:15 JST 2019
         - original version
