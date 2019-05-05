@@ -10,6 +10,20 @@ This is Perl module B<App::jl>.
 =end html
 
 
+=head1 SYNOPSIS
+
+The B<jl> command allows you to recursively decode JSON in JSON string
+
+    $ echo '{"foo":"{\"bar\":\"{\\\"baz\\\":123}\"}"}' | jl
+    {
+       "foo" : {
+          "bar" : {
+             "baz" : 123
+          }
+       }
+    }
+
+
 =head1 INSTALLATION
 
 App::jl installation is straightforward. If your CPAN shell is set up,
