@@ -5,7 +5,7 @@ use JSON qw/decode_json to_json/;
 use Sub::Data::Recursive;
 use Getopt::Long qw/GetOptionsFromArray/;
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 my $MAX_DEPTH = 10;
 
@@ -148,7 +148,7 @@ The parser of the line
 
 =begin html
 
-<a href="http://travis-ci.org/bayashi/App-jl"><img src="https://secure.travis-ci.org/bayashi/App-jl.png?_t=1557028055"/></a> <a href="https://coveralls.io/r/bayashi/App-jl"><img src="https://coveralls.io/repos/bayashi/App-jl/badge.png?_t=1557028055&branch=master"/></a>
+<a href="http://travis-ci.org/bayashi/App-jl"><img src="https://secure.travis-ci.org/bayashi/App-jl.png?_t=1557029628"/></a> <a href="https://coveralls.io/r/bayashi/App-jl"><img src="https://coveralls.io/repos/bayashi/App-jl/badge.png?_t=1557029628&branch=master"/></a>
 
 =end html
 
