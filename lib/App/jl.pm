@@ -125,6 +125,25 @@ App::jl is recursive JSON decoder. This module can decode JSON in JSON.
 See L<jl> for CLI to view logs.
 
 
+=head1 METHODS
+
+=head2 new
+
+constructor
+
+=head2 opt
+
+getter of optional values
+
+=head2 run
+
+The main routine
+
+=head2 process
+
+The parser of the line
+
+
 =head1 REPOSITORY
 
 =begin html
