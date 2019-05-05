@@ -5,6 +5,10 @@ use Test::More;
 use App::jl;
 
 {
+    ok(App::jl->_show_usage('NOEXIT'));
+}
+
+{
     my $command = 'script/jl';
 
     system(
