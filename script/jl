@@ -13,7 +13,7 @@ jl - JSON in JSON log viewer
 
 =head1 SYNOPSIS
 
-    The B<jl> command allows you to recursively decode JSON in JSON string
+The B<jl> command allows you to recursively decode JSON in JSON string
 
     $ echo '{"foo":"{\"bar\":\"{\\\"baz\\\":123}\"}"}' | jl
     {
