@@ -1,6 +1,7 @@
 use strict;
 use warnings;
 use Test::More;
+use Capture::Tiny qw/capture/;
 use JSON qw/encode_json/;
 
 use App::jl;
@@ -29,6 +30,15 @@ DEPTH: {
     note( App::jl->new('--depth', '1')->process($JSON) );
 }
 
-ok 1;
+TEST_RUN_WITH_NOT_JSON: {
+    my $str = 'Not JSON String';
+    open my $IN, '<', \$str;
+    local *STDIN = *$IN;
+    my ($stdout, $stderr) = capture {
+        App::jl->new->run;
+    };
+    close $IN;
+    is $stdout, $str;
+}
 
 done_testing;

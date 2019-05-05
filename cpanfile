@@ -10,6 +10,7 @@ requires 'Pod::Usage';
 
 on 'test' => sub {
     requires 'Test::More', '0.88';
+    requires 'Capture::Tiny';
 };
 
 on 'configure' => sub {
