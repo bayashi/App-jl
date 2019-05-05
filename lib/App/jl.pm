@@ -33,7 +33,7 @@ sub run {
 }
 
 sub process {
-    my ($self, $line) = @_;print $self->opt('depth') . "\n";
+    my ($self, $line) = @_;
 
     my $decoded;
     eval {
