@@ -5,7 +5,7 @@ use JSON qw/decode_json to_json/;
 use Sub::Data::Recursive;
 use Getopt::Long qw/GetOptionsFromArray/;
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 my $MAX_DEPTH = 10;
 
