@@ -43,10 +43,29 @@ sub process {
         return $line;
     }
     else {
+        $self->_recursive_split($decoded) if $self->opt('x');
         $self->{_depth} = $self->opt('depth');
         $self->_recursive_decode_json($decoded);
         return to_json($decoded, {pretty => !$self->opt('no_pretty')});
     }
+}
+
+sub _recursive_split {
+    my ($self, $hash) = @_;
+
+    Sub::Data::Recursive->invoke(
+        sub {
+            my $line = $_[0];
+
+            chomp $line;
+
+            if ($line =~ m![\t\r\n]!) {
+                my @elements = split /[\t\r\n]/, $line;
+                $_[0] = \@elements;
+            }
+        },
+        $hash
+    );
 }
 
 sub _recursive_decode_json {
@@ -81,6 +100,7 @@ sub _parse_opt {
         \@argv,
         'depth=s'   => \$opt->{depth},
         'no-pretty' => \$opt->{no_pretty},
+        'x'         => \$opt->{x},
         'h|help'    => sub {
             $class->_show_usage(1);
         },

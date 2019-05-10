@@ -41,4 +41,10 @@ TEST_RUN_WITH_NOT_JSON: {
     is $stdout, $str;
 }
 
+X: {
+    my $src_json = encode_json({ foo => 'bar' });
+    my $json_in_log = encode_json({ message => qq|[05/09/2019 23:51:51]\t[warn]\r$src_json\n| });
+    note( App::jl->new('-x')->process($json_in_log) );
+}
+
 done_testing;
