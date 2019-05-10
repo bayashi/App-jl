@@ -26,26 +26,19 @@ The B<jl> command allows you to recursively decode JSON in JSON string
 
 =head1 INSTALLATION
 
-App::jl installation is straightforward. If your CPAN shell is set up,
-you should just be able to do
+1) The easiest way to install B<App::jl> is
 
-    % cpan App::jl
+    $ curl -L https://cpanmin.us | perl - -M https://cpan.metacpan.org -n App::jl
 
-Download it, unpack it, then build it as per the usual:
+2) If your L<cpanm> (cpm or CPAN) is set up, you should just be able to do
 
-    % perl Makefile.PL
-    % make && make test
+    $ cpanm App::jl
 
-Then install it:
+3) Clone it, then build it
 
-    % make install
-
-
-=head1 DOCUMENTATION
-
-App::jl documentation is available as in POD. So you can do:
-
-    % perldoc App::jl
+    $ perl Makefile.PL
+    $ make
+    # make install
 
 
 =head1 REPOSITORY
