@@ -50,6 +50,7 @@ sub process {
     }
     else {
         Sub::Data::Recursive->invoke(\&_split => $decoded) if $self->opt('x');
+        $self->{_depth} = $self->opt('depth');
         $self->_recursive_decode_json($decoded);
         return $self->{_json}->encode($decoded);
     }
@@ -67,8 +68,6 @@ sub _split {
 
 sub _recursive_decode_json {
     my ($self, $hash) = @_;
-
-    $self->{_depth} = $self->opt('depth');
 
     Sub::Data::Recursive->invoke(sub {
         if ($self->{_depth} > 0) {
