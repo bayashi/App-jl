@@ -26,6 +26,10 @@ SORT_KEYS: {
     note( App::jl->new->process(encode_json({ z => 1, b => 1, a => 1 })) );
 }
 
+JA: {
+    note( App::jl->new->process(encode_json({ aiko => '詩' })) );
+}
+
 NO_PRETTY: {
     note( App::jl->new('--no-pretty')->process($JSON) );
 }
