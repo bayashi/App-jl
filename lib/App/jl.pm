@@ -49,51 +49,40 @@ sub process {
         return $line;
     }
     else {
-        $self->_recursive_split($decoded) if $self->opt('x');
-        $self->{_depth} = $self->opt('depth');
+        Sub::Data::Recursive->invoke(\&_split => $decoded) if $self->opt('x');
         $self->_recursive_decode_json($decoded);
         return $self->{_json}->encode($decoded);
     }
 }
 
-sub _recursive_split {
-    my ($self, $hash) = @_;
+sub _split {
+    my $line = $_[0];
 
-    Sub::Data::Recursive->invoke(
-        sub {
-            my $line = $_[0];
-
-            chomp $line;
-
-            if ($line =~ m![\t\r\n]!) {
-                my @elements = split /[\t\r\n]/, $line;
-                $_[0] = \@elements;
-            }
-        },
-        $hash
-    );
+    if ($line =~ m![\t\r\n]!) {
+        chomp $line;
+        my @elements = split /[\t\r\n]/, $line;
+        $_[0] = \@elements;
+    }
 }
 
 sub _recursive_decode_json {
     my ($self, $hash) = @_;
 
-    Sub::Data::Recursive->invoke(
-        sub {
-            my $line = $_[0];
+    $self->{_depth} = $self->opt('depth');
 
-            if ($self->{_depth} > 0) {
-                my $h = eval {
-                    $self->{_json}->decode($line);
-                };
-                if (!$@) {
-                    $self->{_depth}--;
-                    $_[0] = $h;
-                    $self->_recursive_decode_json($_[0]);
-                }
+    Sub::Data::Recursive->invoke(sub {
+        if ($self->{_depth} > 0) {
+            my $orig = $_[0];
+            my $decoded = eval {
+                $self->{_json}->decode($orig);
+            };
+            if (!$@) {
+                $self->{_depth}--;
+                $_[0] = $decoded;
+                $self->_recursive_decode_json($_[0]);
             }
-        },
-        $hash
-    );
+        }
+    } => $hash);
 }
 
 sub _parse_opt {
