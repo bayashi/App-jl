@@ -78,7 +78,7 @@ sub _recursive_decode_json {
             if (!$@) {
                 $self->{_depth}--;
                 $_[0] = $decoded;
-                $self->_recursive_decode_json($_[0]); // recursive calling
+                $self->_recursive_decode_json($_[0]); # recursive calling
             }
         }
     } => $hash);
