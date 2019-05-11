@@ -42,9 +42,8 @@ sub run {
 sub process {
     my ($self, $line) = @_;
 
-    my $decoded;
-    eval {
-        $decoded = $self->{_json}->decode($line);
+    my $decoded = eval {
+        $self->{_json}->decode($line);
     };
     if ($@) {
         return $line;
@@ -83,9 +82,8 @@ sub _recursive_decode_json {
             my $line = $_[0];
 
             if ($self->{_depth} > 0) {
-                my $h;
-                eval {
-                    $h = $self->{_json}->decode($line);
+                my $h = eval {
+                    $self->{_json}->decode($line);
                 };
                 if (!$@) {
                     $self->{_depth}--;
