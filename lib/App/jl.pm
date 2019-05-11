@@ -46,7 +46,10 @@ sub process {
         $self->_recursive_split($decoded) if $self->opt('x');
         $self->{_depth} = $self->opt('depth');
         $self->_recursive_decode_json($decoded);
-        return to_json($decoded, { pretty => !$self->opt('no_pretty'), canonical => 1 });
+        return to_json($decoded, {
+            pretty    => !$self->opt('no_pretty'),
+            canonical => 1,
+        });
     }
 }
 
