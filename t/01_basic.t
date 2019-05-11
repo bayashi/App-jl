@@ -23,6 +23,11 @@ BASIC: {
     note( App::jl->new->process($JSON) );
 }
 
+NOT_JSON: {
+    note 'NOT_JSON';
+    note( App::jl->new->process('aikoの詩。') );
+}
+
 SORT_KEYS: {
     note 'SORT_KEYS';
     note( App::jl->new->process(encode_json({ z => 1, b => 1, a => 1 })) );
