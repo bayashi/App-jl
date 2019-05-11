@@ -1,7 +1,7 @@
 package App::jl;
 use strict;
 use warnings;
-use JSON qw/decode_json to_json/;
+use JSON qw//;
 use Sub::Data::Recursive;
 use Getopt::Long qw/GetOptionsFromArray/;
 
@@ -13,8 +13,11 @@ sub new {
     my $class = shift;
     my @argv  = @_;
 
+    my $opt = $class->_parse_opt(@argv);
+
     bless {
-        _opt => $class->_parse_opt(@argv),
+        _opt  => $opt,
+        _json => JSON->new->utf8->pretty(!$opt->{no_pretty})->canonical(1),
     }, $class;
 }
 
@@ -37,7 +40,7 @@ sub process {
 
     my $decoded;
     eval {
-        $decoded = decode_json($line);
+        $decoded = $self->{_json}->decode($line);
     };
     if ($@) {
         return $line;
@@ -46,10 +49,7 @@ sub process {
         $self->_recursive_split($decoded) if $self->opt('x');
         $self->{_depth} = $self->opt('depth');
         $self->_recursive_decode_json($decoded);
-        return to_json($decoded, {
-            pretty    => !$self->opt('no_pretty'),
-            canonical => 1,
-        });
+        return $self->{_json}->encode($decoded);
     }
 }
 
@@ -81,7 +81,7 @@ sub _recursive_decode_json {
             if ($self->{_depth} > 0) {
                 my $h;
                 eval {
-                    $h = decode_json($line);
+                    $h = $self->{_json}->decode($line);
                 };
                 if (!$@) {
                     $self->{_depth}--;
