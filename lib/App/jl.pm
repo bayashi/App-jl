@@ -49,7 +49,8 @@ sub process {
         return $line;
     }
     else {
-        Sub::Data::Recursive->invoke(\&_split => $decoded) if $self->opt('x');
+        Sub::Data::Recursive->invoke(\&_split => $decoded) if $self->opt('x') || $self->opt('xx');
+        Sub::Data::Recursive->invoke(\&_more_split => $decoded) if $self->opt('xx');
         $self->{_depth} = $self->opt('depth');
         $self->_recursive_decode_json($decoded);
         return $self->{_json}->encode($decoded);
@@ -64,6 +65,18 @@ sub _split {
         my @elements = split /[\t\r\n]/, $line;
         $_[0] = \@elements;
     }
+}
+
+sub _more_split {
+    my $line = $_[0];
+
+    chomp $line;
+
+    $line =~ s!([])>])\s+([[(<])!$1$2!g;
+    $line =~ s!([[(<][^])>]+[])>])!$1\n!g; # '\n' already replaced by --x option
+    my @element = split /\n/, $line;
+
+    $_[0] = \@element;
 }
 
 sub _recursive_decode_json {
@@ -94,6 +107,7 @@ sub _parse_opt {
         'depth=s'   => \$opt->{depth},
         'no-pretty' => \$opt->{no_pretty},
         'x'         => \$opt->{x},
+        'xx'        => \$opt->{xx},
         'h|help'    => sub {
             $class->_show_usage(1);
         },

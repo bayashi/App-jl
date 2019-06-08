@@ -79,4 +79,11 @@ X: {
     note( App::jl->new('-x')->process($json_in_log) );
 }
 
+XX: {
+    my $src_json = encode_json({ foo => 'bar' });
+    my $json_in_log = encode_json({ message => qq|[05/09/2019 23:51:51] (warn) <server>\r$src_json\n| });
+    note 'XX';
+    note( App::jl->new('-xx')->process($json_in_log) );
+}
+
 done_testing;
