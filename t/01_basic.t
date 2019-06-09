@@ -86,4 +86,18 @@ XX: {
     note( App::jl->new('-xx')->process($json_in_log) );
 }
 
+XXX: {
+    my $src_json = encode_json({
+        created    => 1560026367,
+        updated    => 1560026367.123,
+        created_at => '1560026367',
+        time       => '1560026367123',
+        unixtime   => 1560026367123,
+        date       => '1560026367.123',
+    });
+    my $json_in_log = encode_json({ message => qq|[05/09/2019 23:51:51] (warn) <server> $src_json\n| });
+    note 'XXX';
+    note( App::jl->new('-xxx')->process($json_in_log) );
+}
+
 done_testing;

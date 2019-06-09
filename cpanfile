@@ -4,7 +4,7 @@ requires 'perl', '5.008005';
 requires 'strict';
 requires 'warnings';
 requires 'JSON';
-requires 'Sub::Data::Recursive';
+requires 'Sub::Data::Recursive', '0.02';
 requires 'Getopt::Long', '2.42';
 requires 'Pod::Usage';
 

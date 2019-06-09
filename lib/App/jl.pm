@@ -3,11 +3,18 @@ use strict;
 use warnings;
 use JSON qw//;
 use Sub::Data::Recursive;
+use POSIX qw/strftime/;
 use Getopt::Long qw/GetOptionsFromArray/;
 
 our $VERSION = '0.06';
 
 my $MAX_DEPTH = 10;
+
+my $MAYBE_UNIXTIME = join '|', (
+    '.ed(?:_at|_on)?',
+    'date',
+    'time',
+);
 
 sub new {
     my $class = shift;
@@ -49,10 +56,11 @@ sub process {
         return $line;
     }
     else {
-        Sub::Data::Recursive->invoke(\&_split => $decoded) if $self->opt('x') || $self->opt('xx');
+        Sub::Data::Recursive->invoke(\&_split => $decoded) if $self->opt('x');
         Sub::Data::Recursive->invoke(\&_more_split => $decoded) if $self->opt('xx');
         $self->{_depth} = $self->opt('depth');
         $self->_recursive_decode_json($decoded);
+        Sub::Data::Recursive->massive_invoke(\&_convert_timestamp => $decoded) if $self->opt('xxx');
         return $self->{_json}->encode($decoded);
     }
 }
@@ -77,6 +85,28 @@ sub _more_split {
     my @element = split /\n/, $line;
 
     $_[0] = \@element;
+}
+
+sub _convert_timestamp {
+    my $line    = $_[0];
+    my $context = $_[1];
+    my $keys    = $_[2];
+
+    return if !$context || $context ne 'HASH';
+
+    my $key = $keys->[0];
+
+    if ($key and $key =~ m!(?:$MAYBE_UNIXTIME)!i and $line =~ m!(\d+(\.\d+)?)!) {
+        my $unix_timestamp = $1;
+        my $msec = $2 || '';
+        if ($unix_timestamp > 2**31 -1) {
+            ($msec) = ($unix_timestamp =~ m!(\d\d\d)$!);
+            $msec = ".$msec";
+            $unix_timestamp = int($unix_timestamp / 1000);
+        }
+        my $date = strftime('%c', localtime($unix_timestamp)) . $msec;
+        $_[0] = "$line ($date)";
+    }
 }
 
 sub _recursive_decode_json {
@@ -108,6 +138,7 @@ sub _parse_opt {
         'no-pretty' => \$opt->{no_pretty},
         'x'         => \$opt->{x},
         'xx'        => \$opt->{xx},
+        'xxx'       => \$opt->{xxx},
         'h|help'    => sub {
             $class->_show_usage(1);
         },
@@ -118,6 +149,9 @@ sub _parse_opt {
     ) or $class->_show_usage(2);
 
     $opt->{depth} ||= $MAX_DEPTH;
+
+    $opt->{x}  ||= $opt->{xx} || $opt->{xxx};
+    $opt->{xx} ||= $opt->{xxx};
 
     return $opt;
 }
