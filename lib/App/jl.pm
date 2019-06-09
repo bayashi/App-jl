@@ -16,6 +16,8 @@ my $MAYBE_UNIXTIME = join '|', (
     'time',
 );
 
+my $UNIXTIMESTAMP_KEY = '';
+
 sub new {
     my $class = shift;
     my @argv  = @_;
@@ -94,18 +96,21 @@ sub _convert_timestamp {
 
     return if !$context || $context ne 'HASH';
 
-    my $key = $keys->[0];
-
-    if ($key and $key =~ m!(?:$MAYBE_UNIXTIME)!i and $line =~ m!(\d+(\.\d+)?)!) {
-        my $unix_timestamp = $1;
-        my $msec = $2 || '';
-        if ($unix_timestamp > 2**31 -1) {
-            ($msec) = ($unix_timestamp =~ m!(\d\d\d)$!);
-            $msec = ".$msec";
-            $unix_timestamp = int($unix_timestamp / 1000);
+    if (my $key = $keys->[0]) {
+        if (
+            ($UNIXTIMESTAMP_KEY && $key eq $UNIXTIMESTAMP_KEY && $line =~ m!(\d+(\.\d+)?)!)
+                || ($key =~ m!(?:$MAYBE_UNIXTIME)!i && $line =~ m!(\d+(\.\d+)?)!)
+        ) {
+            my $unix_timestamp = $1;
+            my $msec = $2 || '';
+            if ($unix_timestamp > 2**31 -1) {
+                ($msec) = ($unix_timestamp =~ m!(\d\d\d)$!);
+                $msec = ".$msec";
+                $unix_timestamp = int($unix_timestamp / 1000);
+            }
+            my $date = strftime('%c', localtime($unix_timestamp)) . $msec;
+            $_[0] = "$line ($date)";
         }
-        my $date = strftime('%c', localtime($unix_timestamp)) . $msec;
-        $_[0] = "$line ($date)";
     }
 }
 
@@ -139,6 +144,7 @@ sub _parse_opt {
         'x'         => \$opt->{x},
         'xx'        => \$opt->{xx},
         'xxx'       => \$opt->{xxx},
+        'timestamp-key=s' => \$opt->{timestamp_key},
         'h|help'    => sub {
             $class->_show_usage(1);
         },
@@ -152,6 +158,8 @@ sub _parse_opt {
 
     $opt->{x}  ||= $opt->{xx} || $opt->{xxx};
     $opt->{xx} ||= $opt->{xxx};
+
+    $UNIXTIMESTAMP_KEY = $opt->{timestamp_key};
 
     return $opt;
 }
