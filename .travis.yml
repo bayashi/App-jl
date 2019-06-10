@@ -13,9 +13,9 @@ perl:
   - "5.14"
   - "5.12"
   - "5.10"
-matrix:
-  include:
-    - perl: 5.30
-      env: COVERAGE=1 # enables coverage+coveralls reporting
 before_install:
-  - eval $(curl https://travis-perl.github.io/init) --auto
+  - cpanm -nq Devel::Cover::Report::Coveralls
+script:
+  perl Build.PL && ./Build build && cover -test
+after_success:
+  - cover -report coveralls
