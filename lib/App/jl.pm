@@ -11,9 +11,15 @@ our $VERSION = '0.07';
 my $MAX_DEPTH = 10;
 
 my $MAYBE_UNIXTIME = join '|', (
-    '.ed(?:_at|_on)?',
+    'create',
+    'update',
+    'expire',
+    '.._(?:at|on)',
+    '.ed$',
     'date',
     'time',
+    'since',
+    'when',
 );
 
 my $UNIXTIMESTAMP_KEY = '';
@@ -58,60 +64,79 @@ sub process {
         return $line;
     }
     else {
-        Sub::Data::Recursive->invoke(\&_split => $decoded) if $self->opt('x');
-        Sub::Data::Recursive->invoke(\&_more_split => $decoded) if $self->opt('xx');
+        Sub::Data::Recursive->invoke(\&_split_lf => $decoded) if $self->opt('x');
         $self->{_depth} = $self->opt('depth');
         $self->_recursive_decode_json($decoded);
-        Sub::Data::Recursive->massive_invoke(\&_convert_timestamp => $decoded) if $self->opt('xxx');
+        Sub::Data::Recursive->invoke(\&_split_comma => $decoded) if $self->opt('xx');
+        Sub::Data::Recursive->invoke(\&_split_label => $decoded) if $self->opt('xxx');
+        Sub::Data::Recursive->massive_invoke(\&_convert_timestamp => $decoded) if $self->opt('xxxx');
         return $self->{_json}->encode($decoded);
     }
 }
 
-sub _split {
+sub _split_lf {
     my $line = $_[0];
 
     if ($line =~ m![\t\r\n]!) {
         chomp $line;
-        my @elements = split /[\t\r\n]/, $line;
-        $_[0] = \@elements;
+        my @elements = split /[\t\r\n]+/, $line;
+        $_[0] = \@elements if scalar @elements > 1;
     }
 }
 
-sub _more_split {
+sub _split_comma {
     my $line = $_[0];
 
     chomp $line;
 
-    $line =~ s!([])>])\s+([[(<])!$1$2!g;
-    $line =~ s!([[(<][^])>]+[])>])!$1\n!g; # '\n' already replaced by --x option
-    my @element = split /\n/, $line;
+    return $line if length $line < 128 || $line !~ m!, ! || $line =~ m!\\!;
 
-    $_[0] = \@element;
+    my @elements = split /,\s+/, $line;
+
+    $_[0] = \@elements if scalar @elements > 1;
 }
+
+sub _split_label {
+    my $line = $_[0];
+
+    chomp $line;
+
+    return $line if length $line < 128 || $line =~ m!\\!;
+
+    $line =~ s!([])>])\s+([[(<])!$1$2!g;
+    $line =~ s!((\[[^])>]+\]|\([^])>]+\)|<[^])>]+>))!$1\n!g; # '\n' already replaced by --x option
+    my @elements = split /\n/, $line;
+
+    $_[0] = \@elements if scalar @elements > 1;
+}
+
+my $LAST_VALUE = '';
 
 sub _convert_timestamp {
     my $line    = $_[0];
     my $context = $_[1];
-    my $keys    = $_[2];
 
-    return if !$context || $context ne 'HASH';
+    return $line if !$context || $context ne 'HASH';
 
-    if (my $key = $keys->[0]) {
-        if (
-            ($UNIXTIMESTAMP_KEY && $key eq $UNIXTIMESTAMP_KEY && $line =~ m!(\d+(\.\d+)?)!)
-                || ($key =~ m!(?:$MAYBE_UNIXTIME)!i && $line =~ m!(\d+(\.\d+)?)!)
-        ) {
-            my $unix_timestamp = $1;
-            my $msec = $2 || '';
+    if (
+        ($UNIXTIMESTAMP_KEY && $LAST_VALUE eq $UNIXTIMESTAMP_KEY && $line =~ m!(\d+(\.\d+)?)!)
+            || ($LAST_VALUE =~ m!(?:$MAYBE_UNIXTIME)!i && $line =~ m!(\d+(\.\d+)?)!)
+    ) {
+        my $unix_timestamp = $1;
+        my $msec = $2 || '';
+        # 946684800 = 2000-01-01T00:00:00Z
+        if ($unix_timestamp > 946684800) {
             if ($unix_timestamp > 2**31 -1) {
                 ($msec) = ($unix_timestamp =~ m!(\d\d\d)$!);
                 $msec = ".$msec";
                 $unix_timestamp = int($unix_timestamp / 1000);
             }
-            my $date = strftime('%c', localtime($unix_timestamp)) . $msec;
-            $_[0] = "$line ($date)";
+            my $date = strftime('%Y-%m-%d %H:%M:%S', localtime($unix_timestamp)) . $msec;
+            $_[0] = "$date = $line";
         }
     }
+
+    $LAST_VALUE = $line;
 }
 
 sub _recursive_decode_json {
@@ -120,6 +145,7 @@ sub _recursive_decode_json {
     Sub::Data::Recursive->invoke(sub {
         if ($self->{_depth} > 0) {
             my $orig = $_[0];
+            return if $orig =~ m!^\[\d+\]$!;
             my $decoded = eval {
                 $self->{_json}->decode($orig);
             };
@@ -144,6 +170,7 @@ sub _parse_opt {
         'x'         => \$opt->{x},
         'xx'        => \$opt->{xx},
         'xxx'       => \$opt->{xxx},
+        'xxxx'      => \$opt->{xxxx},
         'timestamp-key=s' => \$opt->{timestamp_key},
         'h|help'    => sub {
             $class->_show_usage(1);
@@ -156,8 +183,9 @@ sub _parse_opt {
 
     $opt->{depth} ||= $MAX_DEPTH;
 
-    $opt->{x}  ||= $opt->{xx} || $opt->{xxx};
-    $opt->{xx} ||= $opt->{xxx};
+    $opt->{xxx} ||= $opt->{xxxx};
+    $opt->{xx}  ||= $opt->{xxx};
+    $opt->{x}   ||= $opt->{xx};
 
     $UNIXTIMESTAMP_KEY = $opt->{timestamp_key};
 
