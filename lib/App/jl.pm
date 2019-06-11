@@ -122,21 +122,27 @@ sub _convert_timestamp {
         ($UNIXTIMESTAMP_KEY && $LAST_VALUE eq $UNIXTIMESTAMP_KEY && $line =~ m!(\d+(\.\d+)?)!)
             || ($LAST_VALUE =~ m!(?:$MAYBE_UNIXTIME)!i && $line =~ m!(\d+(\.\d+)?)!)
     ) {
-        my $unix_timestamp = $1;
-        my $msec = $2 || '';
-        # 946684800 = 2000-01-01T00:00:00Z
-        if ($unix_timestamp > 946684800) {
-            if ($unix_timestamp > 2**31 -1) {
-                ($msec) = ($unix_timestamp =~ m!(\d\d\d)$!);
-                $msec = ".$msec";
-                $unix_timestamp = int($unix_timestamp / 1000);
-            }
-            my $date = strftime('%Y-%m-%d %H:%M:%S', localtime($unix_timestamp)) . $msec;
+        if (my $date = _ts2date($1, $2)) {
             $_[0] = "$date = $line";
         }
     }
 
     $LAST_VALUE = $line;
+}
+
+sub _ts2date {
+    my $unix_timestamp = shift;
+    my $msec           = shift || '';
+
+    # 946684800 = 2000-01-01T00:00:00Z
+    if ($unix_timestamp > 946684800) {
+        if ($unix_timestamp > 2**31 -1) {
+            ($msec) = ($unix_timestamp =~ m!(\d\d\d)$!);
+            $msec = ".$msec";
+            $unix_timestamp = int($unix_timestamp / 1000);
+        }
+        return strftime('%Y-%m-%d %H:%M:%S', localtime($unix_timestamp)) . $msec;
+    }
 }
 
 sub _recursive_decode_json {
