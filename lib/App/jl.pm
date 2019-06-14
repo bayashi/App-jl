@@ -24,6 +24,8 @@ my $MAYBE_UNIXTIME = join '|', (
 
 my $UNIXTIMESTAMP_KEY = '';
 
+my $GMTIME;
+
 sub new {
     my $class = shift;
     my @argv  = @_;
@@ -162,7 +164,8 @@ sub _ts2date {
             $msec = ".$msec";
             $unix_timestamp = int($unix_timestamp / 1000);
         }
-        return strftime('%Y-%m-%d %H:%M:%S', localtime($unix_timestamp)) . $msec;
+        my @t = $GMTIME ? gmtime($unix_timestamp) : localtime($unix_timestamp);
+        return strftime('%Y-%m-%d %H:%M:%S', @t) . $msec;
     }
 }
 
@@ -199,6 +202,7 @@ sub _parse_opt {
         'xxx'       => \$opt->{xxx},
         'xxxx'      => \$opt->{xxxx},
         'timestamp-key=s' => \$opt->{timestamp_key},
+        'gmtime'    => \$opt->{gmtime},
         'h|help'    => sub {
             $class->_show_usage(1);
         },
@@ -215,6 +219,8 @@ sub _parse_opt {
     $opt->{x}   ||= $opt->{xx};
 
     $UNIXTIMESTAMP_KEY = $opt->{timestamp_key};
+
+    $GMTIME = $opt->{gmtime};
 
     return $opt;
 }

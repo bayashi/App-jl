@@ -108,6 +108,15 @@ XXXX: {
     note( App::jl->new('-xxxx', '--timestamp-key', 'ts')->process($json_in_log) );
 }
 
+GMTIME: {
+    my $src_json = encode_json([
+        { created => 1560026367 },
+    ]);
+    my $json_in_log = encode_json({ message => qq|[info]\n$src_json\n| });
+    note 'GMTIME ' . $json_in_log;
+    note( App::jl->new('-xxxx', '--gmtime')->process($json_in_log) );
+}
+
 {
     my $json = encode_json({
         service => 'Foo-Service',

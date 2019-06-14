@@ -123,6 +123,10 @@ You can set custom timestamp-key to convert unix timestamp to date time.
 
 Supports unixtime C<1560026367>, msec C<1560026367123> and C<1560026367.123>
 
+=head3 gmtime
+
+If you set C<gmtime> flag, then unix timestamp converts date time as GMT instead of localtime.
+
 
 =head3 depth
 
