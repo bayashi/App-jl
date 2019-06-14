@@ -67,9 +67,10 @@ sub process {
         Sub::Data::Recursive->invoke(\&_split_lf => $decoded) if $self->opt('x');
         $self->{_depth} = $self->opt('depth');
         $self->_recursive_decode_json($decoded);
+        Sub::Data::Recursive->invoke(\&_split_lf => $decoded) if $self->opt('x');
         Sub::Data::Recursive->invoke(\&_split_comma => $decoded) if $self->opt('xx');
         Sub::Data::Recursive->invoke(\&_split_label => $decoded) if $self->opt('xxx');
-        Sub::Data::Recursive->massive_invoke(\&_convert_timestamp => $decoded) if $self->opt('xxxx');
+        Sub::Data::Recursive->massive_invoke(\&_convert_timestamp => $decoded) if $self->opt('xxxx') || $self->opt('timestamp_key');
         return $self->{_json}->encode($decoded);
     }
 }
@@ -89,7 +90,7 @@ sub _split_comma {
 
     chomp $line;
 
-    return $line if length $line < 128 || $line !~ m!, ! || $line =~ m!\\!;
+    return $line if $line !~ m!, ! || $line =~ m!\\!;
 
     my @elements = split /,\s+/, $line;
 
@@ -101,7 +102,7 @@ sub _split_label {
 
     chomp $line;
 
-    return $line if length $line < 128 || $line =~ m!\\!;
+    return $line if $line =~ m!\\!;
 
     $line =~ s!([])>])\s+([[(<])!$1$2!g;
     $line =~ s!((\[[^])>]+\]|\([^])>]+\)|<[^])>]+>))!$1\n!g; # '\n' already replaced by --x option
@@ -123,7 +124,7 @@ sub _convert_timestamp {
             || ($LAST_VALUE =~ m!(?:$MAYBE_UNIXTIME)!i && $line =~ m!(\d+(\.\d+)?)!)
     ) {
         if (my $date = _ts2date($1, $2)) {
-            $_[0] = "$date = $line";
+            $_[0] = $date;
         }
     }
 
@@ -213,7 +214,7 @@ __END__
 
 =head1 NAME
 
-App::jl - Recursive JSON decoder
+App::jl - Show JSON Log Nicely
 
 
 =head1 SYNOPSIS
