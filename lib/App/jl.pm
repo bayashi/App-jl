@@ -64,15 +64,35 @@ sub process {
         return $line;
     }
     else {
-        Sub::Data::Recursive->invoke(\&_split_lf => $decoded) if $self->opt('x');
-        $self->{_depth} = $self->opt('depth');
-        $self->_recursive_decode_json($decoded);
-        Sub::Data::Recursive->invoke(\&_split_lf => $decoded) if $self->opt('x');
-        Sub::Data::Recursive->invoke(\&_split_comma => $decoded) if $self->opt('xx');
-        Sub::Data::Recursive->invoke(\&_split_label => $decoded) if $self->opt('xxx');
-        Sub::Data::Recursive->massive_invoke(\&_convert_timestamp => $decoded) if $self->opt('xxxx') || $self->opt('timestamp_key');
-        return $self->{_json}->encode($decoded);
+        $self->_recursive_process($decoded);
+        return $self->{_json}->encode($decoded)
     }
+}
+
+sub _recursive_process {
+    my ($self, $decoded) = @_;
+
+    $self->_recursive_pre_process($decoded);
+
+    $self->{_depth} = $self->opt('depth');
+    $self->_recursive_decode_json($decoded);
+
+    $self->_recursive_post_process($decoded);
+}
+
+sub _recursive_pre_process {
+    my ($self, $decoded) = @_;
+
+    Sub::Data::Recursive->invoke(\&_split_lf => $decoded) if $self->opt('x');
+}
+
+sub _recursive_post_process {
+    my ($self, $decoded) = @_;
+
+    Sub::Data::Recursive->invoke(\&_split_lf => $decoded) if $self->opt('x');
+    Sub::Data::Recursive->invoke(\&_split_comma => $decoded) if $self->opt('xx');
+    Sub::Data::Recursive->invoke(\&_split_label => $decoded) if $self->opt('xxx');
+    Sub::Data::Recursive->massive_invoke(\&_convert_timestamp => $decoded) if $self->opt('xxxx') || $self->opt('timestamp_key');
 }
 
 sub _split_lf {
