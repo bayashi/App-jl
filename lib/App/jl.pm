@@ -6,7 +6,7 @@ use Sub::Data::Recursive;
 use POSIX qw/strftime/;
 use Getopt::Long qw/GetOptionsFromArray/;
 
-our $VERSION = '0.08';
+our $VERSION = '0.09';
 
 my $MAX_DEPTH = 10;
 
@@ -299,7 +299,7 @@ The parser of the line
 
 =begin html
 
-<a href="http://travis-ci.org/bayashi/App-jl"><img src="https://secure.travis-ci.org/bayashi/App-jl.png?_t=1560229824"/></a> <a href="https://coveralls.io/r/bayashi/App-jl"><img src="https://coveralls.io/repos/bayashi/App-jl/badge.png?_t=1560229824&branch=master"/></a>
+<a href="http://travis-ci.org/bayashi/App-jl"><img src="https://secure.travis-ci.org/bayashi/App-jl.png?_t=1560527336"/></a> <a href="https://coveralls.io/r/bayashi/App-jl"><img src="https://coveralls.io/repos/bayashi/App-jl/badge.png?_t=1560527336&branch=master"/></a>
 
 =end html
 
