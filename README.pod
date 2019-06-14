@@ -23,6 +23,32 @@ The B<jl> command allows you to show JSON log nicely. Especially, recursively de
        }
     }
 
+A complecated log can be converted to nice JSON structure to treat a tool like C<jq> .
+
+    echo '{"service":"Foo-Service","pod":"bar-baz-12345","message":"{\"log\":\"[PID:12345]<info>\\nThis is log message. foo, bar, baz, qux, long message is going to be splitted nicely to treat JSON by jq without any special function\",\"timestamp\":1560526739}"}' | jl -xxxx
+    {
+       "message" : {
+          "log" : [
+             [
+                "[PID:12345]",
+                "<info>"
+             ],
+             [
+                "This is log message. foo",
+                "bar",
+                "baz",
+                "qux",
+                "long message is going to be splitted nicely to treat JSON by jq without any special function"
+             ]
+          ],
+          "timestamp" : "2019-06-15 00:38:59"
+       },
+       "pod" : "bar-baz-12345",
+       "service" : "Foo-Service"
+    }
+
+Make logs more readable.
+
 
 =head1 INSTALLATION
 
