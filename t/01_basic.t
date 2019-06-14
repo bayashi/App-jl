@@ -117,6 +117,12 @@ GMTIME: {
     note( App::jl->new('-xxxx', '--gmtime')->process($json_in_log) );
 }
 
+TRIM: {
+    my $json_in_log = encode_json({ message => qq|  info\tfoo\tbar\tbaz  | });
+    note 'GMTIME ' . $json_in_log;
+    note( App::jl->new('-x')->process($json_in_log) );
+}
+
 {
     my $json = encode_json({
         service => 'Foo-Service',

@@ -95,6 +95,7 @@ sub _recursive_post_process {
     Sub::Data::Recursive->invoke(\&_split_comma => $decoded) if $self->opt('xx');
     Sub::Data::Recursive->invoke(\&_split_label => $decoded) if $self->opt('xxx');
     Sub::Data::Recursive->massive_invoke(\&_convert_timestamp => $decoded) if $self->opt('xxxx') || $self->opt('timestamp_key');
+    Sub::Data::Recursive->invoke(\&_trim => $decoded);
 }
 
 sub _split_lf {
@@ -151,6 +152,26 @@ sub _convert_timestamp {
     }
 
     $LAST_VALUE = $line;
+}
+
+sub _trim {
+    my $line = $_[0];
+
+    my $trim = 0;
+
+    if ($line =~ m!^[\s\t\r\n]+!) {
+        $line =~ s!^[\s\t\r\n]+!!;
+        $trim = 1;
+    }
+
+    if ($line =~ m![\s\t\r\n]+$!) {
+        $line =~ s![\s\t\r\n]+$!!;
+        $trim = 1;
+    }
+
+    if ($trim) {
+        $_[0] = $line;
+    }
 }
 
 sub _ts2date {
