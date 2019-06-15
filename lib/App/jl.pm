@@ -49,7 +49,7 @@ sub run {
     my ($self) = @_;
 
     while (my $orig_line = <STDIN>) {
-        if ($orig_line !~ m!^[\[\{]!) {
+        if ($orig_line !~ m!^\s*[\[\{]!) {
             print $orig_line;
             next;
         }
