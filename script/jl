@@ -136,6 +136,10 @@ The number of recursive depth. (default: 10)
 
 If set C<no-pretty> option, then output JSON is not prettify. (default: false, Do prettify)
 
+=head3 yaml
+
+If set C<yaml> option, show output string as YAML instead.
+
 
 =head1 AUTHOR
 

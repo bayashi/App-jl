@@ -33,10 +33,14 @@ sub new {
 
     my $opt = $class->_parse_opt(@argv);
 
-    bless {
+    my $self = bless {
         _opt  => $opt,
         _json => JSON->new->utf8->pretty(!$opt->{no_pretty})->canonical(1),
     }, $class;
+
+    $self->_lazyload_modules;
+
+    return $self;
 }
 
 sub opt {
@@ -57,6 +61,21 @@ sub run {
     }
 }
 
+sub _lazyload_modules {
+    my ($self) = @_;
+
+    if ($self->opt('xxxx') || $self->opt('timestamp_key')) {
+        require 'POSIX.pm'; ## no critic
+        POSIX->import;
+    }
+
+    if ($self->opt('yaml')) {
+        require 'YAML/Syck.pm'; ## no critic
+        YAML::Syck->import;
+        $YAML::Syck::Headless = $YAML::Syck::SortKeys = 1;
+    }
+}
+
 sub process {
     my ($self, $line) = @_;
 
@@ -68,7 +87,19 @@ sub process {
     }
     else {
         $self->_recursive_process($decoded);
-        return $self->{_json}->encode($decoded)
+        return $self->_output($decoded);
+
+    }
+}
+
+sub _output {
+    my ($self, $decoded) = @_;
+
+    if ($self->opt('yaml')) {
+        return YAML::Syck::Dump($decoded);
+    }
+    else {
+        return $self->{_json}->encode($decoded);
     }
 }
 
@@ -105,7 +136,6 @@ sub _recursive_post_process {
     }
 
     if ($self->opt('xxxx') || $self->opt('timestamp_key')) {
-        require 'POSIX.pm'; ## no critic
         $INVOKER->massive_invoke(\&_convert_timestamp => $decoded);
     }
 
@@ -238,6 +268,7 @@ sub _parse_opt {
         'xxxx'      => \$opt->{xxxx},
         'timestamp-key=s' => \$opt->{timestamp_key},
         'gmtime'    => \$opt->{gmtime},
+        'yaml|yml'  => \$opt->{yaml},
         'h|help'    => sub {
             $class->_show_usage(1);
         },

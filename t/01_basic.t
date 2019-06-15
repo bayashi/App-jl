@@ -136,4 +136,9 @@ TRIM: {
     note( App::jl->new('-xxxx')->process($json) );
 }
 
+YAML: {
+    note 'YAML';
+    note( App::jl->new('--yaml')->process($JSON) );
+}
+
 done_testing;
