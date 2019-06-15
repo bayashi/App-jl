@@ -47,7 +47,7 @@ A complecated log can be converted to nice JSON structure to treat a tool like C
        "service" : "Foo-Service"
     }
 
-Make logs more readable.
+Make JSON logs more readable.
 
 
 =head1 INSTALLATION

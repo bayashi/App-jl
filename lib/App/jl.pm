@@ -280,14 +280,16 @@ App::jl - Show JSON Log Nicely
 
 =head1 SYNOPSIS
 
+See L<jl> for CLI to view logs.
+
     use App::jl;
+    
+    App::jl->new(@ARGV)->run;
 
 
 =head1 DESCRIPTION
 
-App::jl is recursive JSON decoder. This module can decode JSON in JSON.
-
-See L<jl> for CLI to view logs.
+App::jl is recursive JSON in JSON decoder. It makes JSON log nice.
 
 
 =head1 METHODS
