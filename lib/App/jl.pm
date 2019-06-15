@@ -3,7 +3,6 @@ use strict;
 use warnings;
 use JSON qw//;
 use Sub::Data::Recursive;
-use POSIX qw/strftime/;
 use Getopt::Long qw/GetOptionsFromArray/;
 
 our $VERSION = '0.09';
@@ -94,7 +93,10 @@ sub _recursive_post_process {
     Sub::Data::Recursive->invoke(\&_split_lf => $decoded) if $self->opt('x');
     Sub::Data::Recursive->invoke(\&_split_comma => $decoded) if $self->opt('xx');
     Sub::Data::Recursive->invoke(\&_split_label => $decoded) if $self->opt('xxx');
-    Sub::Data::Recursive->massive_invoke(\&_convert_timestamp => $decoded) if $self->opt('xxxx') || $self->opt('timestamp_key');
+    if ($self->opt('xxxx') || $self->opt('timestamp_key')) {
+        require 'POSIX.pm'; ## no critic
+        Sub::Data::Recursive->massive_invoke(\&_convert_timestamp => $decoded);
+    }
     Sub::Data::Recursive->invoke(\&_trim => $decoded);
 }
 
@@ -186,7 +188,7 @@ sub _ts2date {
             $unix_timestamp = int($unix_timestamp / 1000);
         }
         my @t = $GMTIME ? gmtime($unix_timestamp) : localtime($unix_timestamp);
-        return strftime('%Y-%m-%d %H:%M:%S', @t) . $msec;
+        return POSIX::strftime('%Y-%m-%d %H:%M:%S', @t) . $msec;
     }
 }
 
