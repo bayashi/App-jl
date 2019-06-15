@@ -25,6 +25,8 @@ my $UNIXTIMESTAMP_KEY = '';
 
 my $GMTIME;
 
+my $INVOKER = 'Sub::Data::Recursive';
+
 sub new {
     my $class = shift;
     my @argv  = @_;
@@ -84,20 +86,30 @@ sub _recursive_process {
 sub _recursive_pre_process {
     my ($self, $decoded) = @_;
 
-    Sub::Data::Recursive->invoke(\&_split_lf => $decoded) if $self->opt('x');
+    $INVOKER->invoke(\&_split_lf => $decoded) if $self->opt('x');
 }
 
 sub _recursive_post_process {
     my ($self, $decoded) = @_;
 
-    Sub::Data::Recursive->invoke(\&_split_lf => $decoded) if $self->opt('x');
-    Sub::Data::Recursive->invoke(\&_split_comma => $decoded) if $self->opt('xx');
-    Sub::Data::Recursive->invoke(\&_split_label => $decoded) if $self->opt('xxx');
+    if ($self->opt('x')) {
+        $INVOKER->invoke(\&_split_lf => $decoded);
+    }
+
+    if ($self->opt('xx')) {
+        $INVOKER->invoke(\&_split_comma => $decoded);
+    }
+
+    if ($self->opt('xxx')) {
+        $INVOKER->invoke(\&_split_label => $decoded);
+    }
+
     if ($self->opt('xxxx') || $self->opt('timestamp_key')) {
         require 'POSIX.pm'; ## no critic
-        Sub::Data::Recursive->massive_invoke(\&_convert_timestamp => $decoded);
+        $INVOKER->massive_invoke(\&_convert_timestamp => $decoded);
     }
-    Sub::Data::Recursive->invoke(\&_trim => $decoded);
+
+    $INVOKER->invoke(\&_trim => $decoded);
 }
 
 sub _split_lf {
