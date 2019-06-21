@@ -72,7 +72,7 @@ sub _lazyload_modules {
     if ($self->opt('yaml')) {
         require 'YAML/Syck.pm'; ## no critic
         YAML::Syck->import;
-        $YAML::Syck::Headless = $YAML::Syck::SortKeys = 1;
+        $YAML::Syck::SortKeys = 1;
     }
 }
 
