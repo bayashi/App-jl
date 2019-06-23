@@ -54,13 +54,21 @@ sub run {
 
     local $| = !!$self->opt('unbuffered');
 
+    my $out = !!$self->opt('stderr') ? *STDERR : *STDOUT;
+
     while (my $orig_line = <STDIN>) {
         if ($orig_line !~ m!^\s*[\[\{]!) {
-            print $orig_line;
+            print $out $orig_line;
             next;
         }
-        print $self->process($orig_line);
+        print $out $self->process($orig_line);
     }
+}
+
+sub _output {
+    my ($self, $line) = @_;
+
+    print STDOUT
 }
 
 sub _lazyload_modules {
@@ -288,6 +296,7 @@ sub _parse_opt {
         'gmtime'    => \$opt->{gmtime},
         'yaml|yml'  => \$opt->{yaml},
         'unbuffered' => \$opt->{unbuffered},
+        'stderr'    => \$opt->{stderr},
         'h|help'    => sub {
             $class->_show_usage(1);
         },

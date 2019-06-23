@@ -148,6 +148,10 @@ If set C<yaml> option, show output string as YAML instead.
 
 If set C<unbuffered> option, flush the output after each line is printed.
 
+=head3 stderr
+
+If set C<stderr> option, output line to STDERR instead.
+
 
 =head1 AUTHOR
 

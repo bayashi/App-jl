@@ -82,6 +82,18 @@ STDIN: {
     note $stdout;
 }
 
+STDERR: {
+    open my $IN, '<', \$JSON;
+    local *STDIN = *$IN;
+    my ($stdout, $stderr) = capture {
+        App::jl->new('--stderr')->run;
+    };
+    close $IN;
+    note 'STDERR';
+    is $stdout, '';
+    ok $stderr;
+}
+
 STDIN_WITH_NOT_JSON: {
     my $str = 'aikoの詩。';
     open my $IN, '<', \$str;
