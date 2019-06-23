@@ -138,8 +138,15 @@ sub _recursive_post_process {
     }
 
     if ($self->opt('xxxx') || $self->opt('timestamp_key')) {
-        $INVOKER->massive_invoke(\&_convert_timestamp => $decoded);
+        if ($self->opt('xxxxx')) {
+            $INVOKER->massive_invoke(\&_forcely_convert_timestamp => $decoded);
+        }
+        else {
+            $INVOKER->massive_invoke(\&_convert_timestamp => $decoded);
+        }
     }
+
+
 
     $INVOKER->invoke(\&_trim => $decoded);
 }
@@ -200,6 +207,16 @@ sub _convert_timestamp {
     $LAST_VALUE = $line;
 }
 
+sub _forcely_convert_timestamp {
+    my $line    = $_[0];
+
+    if ($line =~ m!(\d+(\.\d+)?)!) {
+        if (my $date = _ts2date($1, $2)) {
+            $_[0] = $date;
+        }
+    }
+}
+
 sub _trim {
     my $line = $_[0];
 
@@ -225,7 +242,7 @@ sub _ts2date {
     my $msec           = shift || '';
 
     # 946684800 = 2000-01-01T00:00:00Z
-    if ($unix_timestamp > 946684800) {
+    if ($unix_timestamp >= 946684800) {
         if ($unix_timestamp > 2**31 -1) {
             ($msec) = ($unix_timestamp =~ m!(\d\d\d)$!);
             $msec = ".$msec";
@@ -268,6 +285,7 @@ sub _parse_opt {
         'xx'        => \$opt->{xx},
         'xxx'       => \$opt->{xxx},
         'xxxx'      => \$opt->{xxxx},
+        'xxxxx'     => \$opt->{xxxxx},
         'timestamp-key=s' => \$opt->{timestamp_key},
         'gmtime'    => \$opt->{gmtime},
         'yaml|yml'  => \$opt->{yaml},
@@ -283,9 +301,10 @@ sub _parse_opt {
 
     $opt->{depth} ||= $MAX_DEPTH;
 
-    $opt->{xxx} ||= $opt->{xxxx};
-    $opt->{xx}  ||= $opt->{xxx};
-    $opt->{x}   ||= $opt->{xx};
+    $opt->{xxxx} ||= $opt->{xxxxx};
+    $opt->{xxx}  ||= $opt->{xxxx};
+    $opt->{xx}   ||= $opt->{xxx};
+    $opt->{x}    ||= $opt->{xx};
 
     $UNIXTIMESTAMP_KEY = $opt->{timestamp_key};
 

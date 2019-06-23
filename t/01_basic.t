@@ -141,4 +141,13 @@ YAML: {
     note( App::jl->new('--yaml')->process($JSON) );
 }
 
+XXXXX: {
+    my $src_json = encode_json([
+        { created => 946684800 },
+    ]);
+    my $json_in_log = encode_json({ message => qq|[info]\n$src_json\n| });
+    note 'XXXXX ' . $json_in_log;
+    note( App::jl->new('-xxxxx')->process($json_in_log) );
+}
+
 done_testing;

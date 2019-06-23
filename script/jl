@@ -108,8 +108,6 @@ This option is useful for below case:
        ]
     }
 
-B<NOTE> that if you set C<xxxx> option, then it means that C<x>, C<xx> and C<xxx> are enabled as well. C<xxx> is going to be enabled C<x> and C<xx> as well. So C<xx> is including C<x>.
-
 =head3 timestamp-key
 
 You can set custom timestamp-key to convert unix timestamp to date time.
@@ -122,6 +120,12 @@ You can set custom timestamp-key to convert unix timestamp to date time.
     }
 
 Supports unixtime C<1560026367>, msec C<1560026367123> and C<1560026367.123>
+
+=head3 xxxxx
+
+If you set C<xxxxx> option, then forcely convert integer value which is over 946684800 (2000-01-01T00:00:00Z).
+
+B<NOTE> that if you set C<xxxx> option, then it means that C<x>, C<xx> and C<xxx> are enabled as well. C<xxx> is going to be enabled C<x> and C<xx> as well. So C<xx> is including C<x>.
 
 =head3 gmtime
 
