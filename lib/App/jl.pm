@@ -65,12 +65,6 @@ sub run {
     }
 }
 
-sub _output {
-    my ($self, $line) = @_;
-
-    print STDOUT
-}
-
 sub _lazyload_modules {
     my ($self) = @_;
 
