@@ -146,8 +146,6 @@ sub _recursive_post_process {
         }
     }
 
-
-
     $INVOKER->invoke(\&_trim => $decoded);
 }
 
