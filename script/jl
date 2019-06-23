@@ -140,6 +140,10 @@ If set C<no-pretty> option, then output JSON is not prettify. (default: false, D
 
 If set C<yaml> option, show output string as YAML instead.
 
+=head3 unbuffered
+
+If set C<unbuffered> option, flush the output after each line is printed.
+
 
 =head1 AUTHOR
 

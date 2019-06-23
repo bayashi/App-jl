@@ -52,6 +52,8 @@ sub opt {
 sub run {
     my ($self) = @_;
 
+    local $| = !!$self->opt('unbuffered');
+
     while (my $orig_line = <STDIN>) {
         if ($orig_line !~ m!^\s*[\[\{]!) {
             print $orig_line;
@@ -269,6 +271,7 @@ sub _parse_opt {
         'timestamp-key=s' => \$opt->{timestamp_key},
         'gmtime'    => \$opt->{gmtime},
         'yaml|yml'  => \$opt->{yaml},
+        'unbuffered' => \$opt->{unbuffered},
         'h|help'    => sub {
             $class->_show_usage(1);
         },
