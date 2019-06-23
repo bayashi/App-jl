@@ -57,22 +57,32 @@ sub run {
     my $out = !!$self->opt('stderr') ? *STDERR : *STDOUT;
 
     while (my $orig_line = <STDIN>) {
-        if ($orig_line !~ m!^\s*[\[\{]!) {
-            print $out $orig_line;
-            next;
+        if (my $line = $self->_run_line($orig_line)) {
+            print $out $line;
         }
-        if (my $regexp = $self->opt('grep')) {
-            if ($orig_line !~ m!$regexp!) {
-                next;
-            }
-        }
-        if (my $regexp = $self->opt('ignore')) {
-            if ($orig_line =~ m!$regexp!) {
-                next;
-            }
-        }
-        print $out $self->process($orig_line);
     }
+}
+
+sub _run_line {
+    my ($self, $orig_line) = @_;
+
+    if ($orig_line !~ m!^\s*[\[\{]!) {
+        return $orig_line;
+    }
+
+    if (my $regexp = $self->opt('grep')) {
+        if ($orig_line !~ m!$regexp!) {
+            return;
+        }
+    }
+
+    if (my $regexp = $self->opt('ignore')) {
+        if ($orig_line =~ m!$regexp!) {
+            return;
+        }
+    }
+
+    return $self->process($orig_line);
 }
 
 sub _lazyload_modules {
