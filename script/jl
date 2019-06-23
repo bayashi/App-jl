@@ -131,6 +131,13 @@ B<NOTE> that if you set C<xxxx> option, then it means that C<x>, C<xx> and C<xxx
 
 If you set C<gmtime> flag, then unix timestamp converts date time as GMT instead of localtime.
 
+=head3 grep REGEXP
+
+If set C<grep> option with regexp, filtering JSON which is matched regexp.
+
+=head3 ignore REGEXP
+
+If set C<ignore> option with regexp, filtering JSON which is unmatched regexp.
 
 =head3 depth
 

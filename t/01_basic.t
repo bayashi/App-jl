@@ -107,6 +107,28 @@ STDIN_WITH_NOT_JSON: {
     is $stdout, $str;
 }
 
+GREP: {
+    open my $IN, '<', \$JSON;
+    local *STDIN = *$IN;
+    my ($stdout, $stderr) = capture {
+        App::jl->new('--grep', 'baz')->run;
+    };
+    close $IN;
+    note 'GREP';
+    ok $stdout;
+}
+
+IGNORE: {
+    open my $IN, '<', \$JSON;
+    local *STDIN = *$IN;
+    my ($stdout, $stderr) = capture {
+        App::jl->new('--ignore', 'baz')->run;
+    };
+    close $IN;
+    note 'IGNORE';
+    ok !$stdout;
+}
+
 {
     my $src_json = encode_json([
         { created => 1560026367 },

@@ -61,6 +61,16 @@ sub run {
             print $out $orig_line;
             next;
         }
+        if (my $regexp = $self->opt('grep')) {
+            if ($orig_line !~ m!$regexp!) {
+                next;
+            }
+        }
+        if (my $regexp = $self->opt('ignore')) {
+            if ($orig_line =~ m!$regexp!) {
+                next;
+            }
+        }
         print $out $self->process($orig_line);
     }
 }
@@ -288,6 +298,8 @@ sub _parse_opt {
         'xxxxx'     => \$opt->{xxxxx},
         'timestamp-key=s' => \$opt->{timestamp_key},
         'gmtime'    => \$opt->{gmtime},
+        'g|grep=s'  => \$opt->{grep},
+        'ignore=s'  => \$opt->{ignore},
         'yaml|yml'  => \$opt->{yaml},
         'unbuffered' => \$opt->{unbuffered},
         'stderr'    => \$opt->{stderr},
