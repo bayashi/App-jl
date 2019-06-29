@@ -66,6 +66,10 @@ sub run {
 sub _run_line {
     my ($self, $orig_line) = @_;
 
+    if ($orig_line =~ m!^[\s\t\r\n]+$!) {
+        return;
+    }
+
     if ($orig_line !~ m!^\s*[\[\{]!) {
         return $orig_line;
     }

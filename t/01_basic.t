@@ -71,6 +71,16 @@ jl_test('DEPTH', $JSON, ['--depth', '1']);
     jl_test('XXXX', $json_in_log, ['-xxxx', '--timestamp-key', 'ts']);
 }
 
+STDIN_SKIP: {
+    open my $IN, '<', \"\t \r\n\t\n";
+    local *STDIN = *$IN;
+    my ($stdout, $stderr) = capture {
+        App::jl->new->run;
+    };
+    close $IN;
+    is $stdout, '', 'STDIN_SKIP';
+}
+
 STDIN: {
     open my $IN, '<', \$JSON;
     local *STDIN = *$IN;
