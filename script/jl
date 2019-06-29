@@ -159,6 +159,12 @@ If set C<unbuffered> option, flush the output after each line is printed.
 
 If set C<stderr> option, output line to STDERR instead.
 
+=head3 sweep
+
+If set C<sweep> option, filtering non-JSON lines. By default, non-JSON line prints as raw.
+
+NOTE that non-JSON line, a line just consists of [\t\s\r\n] will be filtered.
+
 
 =head1 AUTHOR
 

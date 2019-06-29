@@ -71,7 +71,7 @@ sub _run_line {
     }
 
     if ($orig_line !~ m!^\s*[\[\{]!) {
-        return $orig_line;
+        return $self->opt('sweep') ? undef : $orig_line;
     }
 
     if (my $regexp = $self->opt('grep')) {
@@ -317,6 +317,7 @@ sub _parse_opt {
         'yaml|yml'  => \$opt->{yaml},
         'unbuffered' => \$opt->{unbuffered},
         'stderr'    => \$opt->{stderr},
+        'sweep'     => \$opt->{sweep},
         'h|help'    => sub {
             $class->_show_usage(1);
         },
