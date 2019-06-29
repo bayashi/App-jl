@@ -396,7 +396,7 @@ The parser of the line
 
 =begin html
 
-<img src="https://img.shields.io/badge/LICENSE-Perl-GREEN.png"> <a href="http://travis-ci.org/bayashi/App-jl"><img src="https://secure.travis-ci.org/bayashi/App-jl.png?_t=1561268694"/></a> <a href="https://coveralls.io/r/bayashi/App-jl"><img src="https://coveralls.io/repos/bayashi/App-jl/badge.png?_t=1561268694&branch=master"/></a>
+<a href="http://github.com/bayashi/App-jl/blob/master/LICENSE"><img src="https://img.shields.io/badge/LICENSE-Perl-GREEN.png"></a> <a href="http://travis-ci.org/bayashi/App-jl"><img src="https://secure.travis-ci.org/bayashi/App-jl.png?_t=1561268694"/></a> <a href="https://coveralls.io/r/bayashi/App-jl"><img src="https://coveralls.io/repos/bayashi/App-jl/badge.png?_t=1561268694&branch=master"/></a>
 
 =end html
 
