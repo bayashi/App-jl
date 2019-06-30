@@ -115,12 +115,12 @@ sub process {
     }
     else {
         $self->_recursive_process($decoded);
-        return $self->_output($decoded);
+        return $self->_encode($decoded);
 
     }
 }
 
-sub _output {
+sub _encode {
     my ($self, $decoded) = @_;
 
     if ($self->opt('yaml')) {
