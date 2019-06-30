@@ -145,38 +145,62 @@ sub _recursive_process {
 sub _recursive_pre_process {
     my ($self, $decoded) = @_;
 
-    $INVOKER->invoke(\&_split_lf => $decoded) if $self->opt('x');
+    $self->_invoker(\&_split_lf => $decoded) if $self->opt('x');
 }
 
 sub _recursive_post_process {
     my ($self, $decoded) = @_;
 
     if ($self->opt('x')) {
-        $INVOKER->invoke(\&_split_lf => $decoded);
+        $self->_invoker(\&_split_lf => $decoded);
     }
 
     if ($self->opt('xx')) {
-        $INVOKER->invoke(\&_split_comma => $decoded);
+        $self->_invoker(\&_split_comma => $decoded);
     }
 
     if ($self->opt('xxx')) {
-        $INVOKER->invoke(\&_split_label => $decoded);
+        $self->_invoker(\&_split_label => $decoded);
     }
 
     if ($self->opt('xxxx') || $self->opt('timestamp_key')) {
         if ($self->opt('xxxxx')) {
-            $INVOKER->massive_invoke(\&_forcely_convert_timestamp => $decoded);
+            $INVOKER->invoke(\&_forcely_convert_timestamp => $decoded);
         }
         else {
-            $INVOKER->massive_invoke(\&_convert_timestamp => $decoded);
+            $self->_invoker(\&_convert_timestamp => $decoded);
         }
     }
 
     $INVOKER->invoke(\&_trim => $decoded);
 }
 
+my $LAST_VALUE;
+
+sub _invoker {
+    my ($self, $code_ref, $hash) = @_;
+
+    $LAST_VALUE = '';
+    $INVOKER->massive_invoke($code_ref => $hash);
+}
+
+sub _skippable_value {
+    my ($context, $last_value) = @_;
+
+    return $context && $context eq 'HASH'
+            && $last_value && $last_value =~ m!user[\-\_\s]*agent!i;
+}
+
 sub _split_lf {
-    my $line = $_[0];
+    my $line    = $_[0];
+    my $context = $_[1];
+
+    if (_skippable_value($context, $LAST_VALUE)) {
+        $LAST_VALUE = $line;
+        return $line;
+    }
+
+    $LAST_VALUE = $line;
 
     if ($line =~ m![\t\r\n]!) {
         chomp $line;
@@ -186,7 +210,15 @@ sub _split_lf {
 }
 
 sub _split_comma {
-    my $line = $_[0];
+    my $line    = $_[0];
+    my $context = $_[1];
+
+    if (_skippable_value($context, $LAST_VALUE)) {
+        $LAST_VALUE = $line;
+        return $line;
+    }
+
+    $LAST_VALUE = $line;
 
     chomp $line;
 
@@ -198,7 +230,15 @@ sub _split_comma {
 }
 
 sub _split_label {
-    my $line = $_[0];
+    my $line    = $_[0];
+    my $context = $_[1];
+
+    if (_skippable_value($context, $LAST_VALUE)) {
+        $LAST_VALUE = $line;
+        return $line;
+    }
+
+    $LAST_VALUE = $line;
 
     chomp $line;
 
@@ -210,8 +250,6 @@ sub _split_label {
 
     $_[0] = \@elements if scalar @elements > 1;
 }
-
-my $LAST_VALUE = '';
 
 sub _convert_timestamp {
     my $line    = $_[0];

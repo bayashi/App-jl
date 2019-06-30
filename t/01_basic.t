@@ -173,4 +173,20 @@ jl_test('YAML', $JSON, ['-yaml']);
     jl_test('XXXXX', $json_in_log, ['-xxxxx']);
 }
 
+jl_test('UA', encode_json({
+    'user agent' => "L\nF",
+    'user-agent' => "L\nF",
+    user_agent => "L\nF",
+    userAgent => "L\nF",
+    UserAgent => "L\nF",
+}), ['-x']);
+
+jl_test('UA-COMMA', encode_json({
+    useragent => "L, F",
+}), ['-xx']);
+
+jl_test('UA-LABEL', encode_json({
+    useragent => "foo [bar] baz",
+}), ['-xxx']);
+
 done_testing;
