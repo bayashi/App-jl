@@ -11,7 +11,7 @@ sub jl_test {
 
     note $name;
     note(
-        App::jl->new($opt ? @{$opt} : ())->process($src_json)
+        App::jl->new($opt ? @{$opt} : ())->_run_line($src_json)
     );
 }
 
@@ -29,8 +29,6 @@ note $JSON;
 
 jl_test('BASIC', $JSON);
 
-jl_test('NOT_JSON', 'aikoの詩。');
-
 jl_test('SORT_KEYS', encode_json({ z => 1, b => 1, a => 1 }));
 
 jl_test('JA', encode_json({ aiko => '詩' }));
@@ -38,8 +36,6 @@ jl_test('JA', encode_json({ aiko => '詩' }));
 jl_test('NO_PRETTY', $JSON, ['--no-pretty']);
 
 jl_test('DEPTH', $JSON, ['--depth', '1']);
-
-jl_test('SWEEP', 'not JSON', ['--sweep']);
 
 {
     my $src_json = encode_json({ foo => 'bar' });
@@ -73,15 +69,7 @@ jl_test('SWEEP', 'not JSON', ['--sweep']);
     jl_test('XXXX', $json_in_log, ['-xxxx', '--timestamp-key', 'ts']);
 }
 
-STDIN_SKIP: {
-    open my $IN, '<', \"\t \r\n\t\n";
-    local *STDIN = *$IN;
-    my ($stdout, $stderr) = capture {
-        App::jl->new->run;
-    };
-    close $IN;
-    is $stdout, '', 'STDIN_SKIP';
-}
+jl_test('NO_CONTENT_LINE', "\t \r\n\t\n");
 
 STDIN: {
     open my $IN, '<', \$JSON;
@@ -106,7 +94,7 @@ STDERR: {
     ok $stderr;
 }
 
-STDIN_WITH_NOT_JSON: {
+STDIN_NOT_JSON: {
     my $str = 'aikoの詩。';
     open my $IN, '<', \$str;
     local *STDIN = *$IN;
@@ -119,27 +107,21 @@ STDIN_WITH_NOT_JSON: {
     is $stdout, $str;
 }
 
-GREP: {
-    open my $IN, '<', \$JSON;
+STDIN_SWEEP: {
+    my $str = 'aikoの詩。';
+    open my $IN, '<', \$str;
     local *STDIN = *$IN;
     my ($stdout, $stderr) = capture {
-        App::jl->new('--grep', 'baz')->run;
+        App::jl->new('--sweep')->run;
     };
     close $IN;
-    note 'GREP';
-    ok $stdout;
+    note 'SWEEP';
+    is $stdout, '';
 }
 
-IGNORE: {
-    open my $IN, '<', \$JSON;
-    local *STDIN = *$IN;
-    my ($stdout, $stderr) = capture {
-        App::jl->new('--ignore', 'baz')->run;
-    };
-    close $IN;
-    note 'IGNORE';
-    ok !$stdout;
-}
+jl_test('GREP', $JSON, ['--grep', 'baz']);
+
+jl_test('IGNORE', $JSON, ['--ignore', 'baz']);
 
 {
     my $src_json = encode_json([

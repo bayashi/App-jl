@@ -86,7 +86,7 @@ sub _run_line {
         }
     }
 
-    return $self->process($orig_line);
+    return $self->_process($orig_line);
 }
 
 sub _lazyload_modules {
@@ -104,7 +104,7 @@ sub _lazyload_modules {
     }
 }
 
-sub process {
+sub _process {
     my ($self, $line) = @_;
 
     my $decoded = eval {
@@ -279,6 +279,22 @@ sub _forcely_convert_timestamp {
     }
 }
 
+sub _ts2date {
+    my $unix_timestamp = shift;
+    my $msec           = shift || '';
+
+    # 946684800 = 2000-01-01T00:00:00Z
+    if ($unix_timestamp >= 946684800) {
+        if ($unix_timestamp > 2**31 -1) {
+            ($msec) = ($unix_timestamp =~ m!(\d\d\d)$!);
+            $msec = ".$msec";
+            $unix_timestamp = int($unix_timestamp / 1000);
+        }
+        my @t = $GMTIME ? gmtime($unix_timestamp) : localtime($unix_timestamp);
+        return POSIX::strftime('%Y-%m-%d %H:%M:%S', @t) . $msec;
+    }
+}
+
 sub _trim {
     my $line = $_[0];
 
@@ -296,22 +312,6 @@ sub _trim {
 
     if ($trim) {
         $_[0] = $line;
-    }
-}
-
-sub _ts2date {
-    my $unix_timestamp = shift;
-    my $msec           = shift || '';
-
-    # 946684800 = 2000-01-01T00:00:00Z
-    if ($unix_timestamp >= 946684800) {
-        if ($unix_timestamp > 2**31 -1) {
-            ($msec) = ($unix_timestamp =~ m!(\d\d\d)$!);
-            $msec = ".$msec";
-            $unix_timestamp = int($unix_timestamp / 1000);
-        }
-        my @t = $GMTIME ? gmtime($unix_timestamp) : localtime($unix_timestamp);
-        return POSIX::strftime('%Y-%m-%d %H:%M:%S', @t) . $msec;
     }
 }
 
@@ -424,10 +424,6 @@ getter of optional values
 =head2 run
 
 The main routine
-
-=head2 process
-
-The parser of the line
 
 
 =head1 REPOSITORY
