@@ -74,19 +74,27 @@ sub _run_line {
         return $self->opt('sweep') ? undef : $orig_line;
     }
 
-    if (my $regexp = $self->opt('grep')) {
-        if ($orig_line !~ m!$regexp!) {
-            return;
+    if (my $rs = $self->opt('grep')) {
+        if (!$self->_match_grep($rs, $orig_line)) {
+            return; # no match
         }
     }
 
-    if (my $regexp = $self->opt('ignore')) {
-        if ($orig_line =~ m!$regexp!) {
-            return;
+    if (my $rs = $self->opt('ignore')) {
+        if ($self->_match_grep($rs, $orig_line)) {
+            return; # ignore if even one match
         }
     }
 
     return $self->_process($orig_line);
+}
+
+sub _match_grep {
+    my ($self, $rs, $orig_line) = @_;
+
+    for my $r (@{$rs}) {
+        return 1 if $orig_line =~ m!$r!;
+    }
 }
 
 sub _lazyload_modules {
@@ -350,8 +358,8 @@ sub _parse_opt {
         'xxxxx'     => \$opt->{xxxxx},
         'timestamp-key=s' => \$opt->{timestamp_key},
         'gmtime'    => \$opt->{gmtime},
-        'g|grep=s'  => \$opt->{grep},
-        'ignore=s'  => \$opt->{ignore},
+        'g|grep=s@' => \$opt->{grep},
+        'ignore=s@' => \$opt->{ignore},
         'yaml|yml'  => \$opt->{yaml},
         'unbuffered' => \$opt->{unbuffered},
         'stderr'    => \$opt->{stderr},

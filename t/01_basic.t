@@ -193,6 +193,18 @@ jl_test('GREP', $JSON, ['--grep', 'baz'], sub {
     ok $output =~ m!baz!;
 });
 
+jl_test('GREP_MULTI', $JSON, ['--grep', 'baz', '--grep', 'no_match_cond'], sub {
+    my ($output, $src) = @_;
+
+    ok $output =~ m!baz!;
+});
+
+jl_test('GREP_MULTI2', $JSON, ['--grep', 'baz', '--grep', 'bar'], sub {
+    my ($output, $src) = @_;
+
+    ok $output =~ m!baz!;
+});
+
 jl_test('GREP_NO_MATCH', $JSON, ['--grep', 'no match'], sub {
     my ($output, $src) = @_;
 
@@ -200,6 +212,18 @@ jl_test('GREP_NO_MATCH', $JSON, ['--grep', 'no match'], sub {
 });
 
 jl_test('IGNORE', $JSON, ['--ignore', 'baz'], sub {
+    my ($output, $src) = @_;
+
+    is $output, undef;
+});
+
+jl_test('IGNORE_MULTI', $JSON, ['--ignore', 'baz', '--ignore', 'bar'], sub {
+    my ($output, $src) = @_;
+
+    is $output, undef;
+});
+
+jl_test('IGNORE_BUT_SHOW', $JSON, ['--ignore', 'baz', '--ignore', 'no_match_cond'], sub {
     my ($output, $src) = @_;
 
     is $output, undef;
