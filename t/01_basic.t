@@ -38,6 +38,15 @@ jl_test('BASIC', $JSON, [], sub {
     ok $output =~ m!foo!;
 });
 
+{
+    my $like_json_not_json = '{"not":"JSON"';
+    jl_test('LIKE_JSON_NOT_JSON', $like_json_not_json, [], sub {
+        my ($output, $src) = @_;
+
+        is $output, $like_json_not_json;
+    });
+}
+
 jl_test('SORT_KEYS', encode_json({ z => 1, b => 1, a => 1 }), [], sub {
     my ($output, $src) = @_;
 
@@ -182,6 +191,12 @@ jl_test('GREP', $JSON, ['--grep', 'baz'], sub {
     my ($output, $src) = @_;
 
     ok $output =~ m!baz!;
+});
+
+jl_test('GREP_NO_MATCH', $JSON, ['--grep', 'no match'], sub {
+    my ($output, $src) = @_;
+
+    is $output, undef;
 });
 
 jl_test('IGNORE', $JSON, ['--ignore', 'baz'], sub {
