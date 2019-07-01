@@ -36,6 +36,7 @@ sub new {
     my $self = bless {
         _opt  => $opt,
         _json => JSON->new->utf8->pretty(!$opt->{no_pretty})->canonical(1),
+        __current_orig_line => undef,
     }, $class;
 
     $self->_lazyload_modules;
@@ -56,44 +57,45 @@ sub run {
 
     my $out = !!$self->opt('stderr') ? *STDERR : *STDOUT;
 
-    while (my $orig_line = <STDIN>) {
-        if (my $line = $self->_run_line($orig_line)) {
+    while ($self->{__current_orig_line} = <STDIN>) {
+        if (my $line = $self->_run_line) {
             print $out $line;
         }
+        $self->{__current_orig_line} = undef;
     }
 }
 
 sub _run_line {
-    my ($self, $orig_line) = @_;
+    my ($self) = @_;
 
-    if ($orig_line =~ m!^[\s\t\r\n]+$!) {
+    if ($self->{__current_orig_line} =~ m!^[\s\t\r\n]+$!) {
         return;
     }
 
-    if ($orig_line !~ m!^\s*[\[\{]!) {
-        return $self->opt('sweep') ? undef : $orig_line;
+    if ($self->{__current_orig_line} !~ m!^\s*[\[\{]!) {
+        return $self->opt('sweep') ? undef : $self->{__current_orig_line};
     }
 
     if (my $rs = $self->opt('grep')) {
-        if (!$self->_match_grep($rs, $orig_line)) {
+        if (!$self->_match_grep($rs)) {
             return; # no match
         }
     }
 
     if (my $rs = $self->opt('ignore')) {
-        if ($self->_match_grep($rs, $orig_line)) {
+        if ($self->_match_grep($rs)) {
             return; # ignore if even one match
         }
     }
 
-    return $self->_process($orig_line);
+    return $self->_process;
 }
 
 sub _match_grep {
-    my ($self, $rs, $orig_line) = @_;
+    my ($self, $rs) = @_;
 
     for my $r (@{$rs}) {
-        return 1 if $orig_line =~ m!$r!;
+        return 1 if $self->{__current_orig_line} =~ m!$r!;
     }
 }
 
@@ -113,18 +115,17 @@ sub _lazyload_modules {
 }
 
 sub _process {
-    my ($self, $orig_line) = @_;
+    my ($self) = @_;
 
     my $decoded = eval {
-        $self->{_json}->decode($orig_line);
+        $self->{_json}->decode($self->{__current_orig_line});
     };
     if ($@) {
-        return $orig_line;
+        return $self->{__current_orig_line};
     }
     else {
         $self->_recursive_process($decoded);
         return $self->_encode($decoded);
-
     }
 }
 

@@ -10,13 +10,15 @@ use App::jl;
 sub jl_test {
     my ($name, $src_json, $opt, $test_ref, $do_note) = @_;
 
-    my $ouput = App::jl->new($opt ? @{$opt} : ())->_run_line($src_json);
+    my $jl = App::jl->new($opt ? @{$opt} : ());
+    $jl->{__current_orig_line} = $src_json;
+    my $output = $jl->_run_line;
 
     note $name  if $do_note;
-    note $ouput if $do_note;
+    note $output if $do_note;
 
     if (ref $test_ref eq 'CODE') {
-        $test_ref->($ouput, $src_json);
+        $test_ref->($output, $src_json);
     }
 }
 
