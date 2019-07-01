@@ -17,10 +17,11 @@ perl:
 before_install:
   - cpanm -nq Devel::Cover::Report::Coveralls
 script:
-  perl Build.PL && ./Build build && cover -test
+  perl Build.PL && ./Build build
 after_success:
   - |
     if [[ $TRAVIS_PERL_VERSION = 5.30 ]]
     then
+        cover -test
         cover -report coveralls
     fi
