@@ -220,9 +220,9 @@ sub _split_comma {
 
     $LAST_VALUE = $line;
 
-    chomp $line;
-
     return $line if $line !~ m!, ! || $line =~ m!\\!;
+
+    chomp $line;
 
     my @elements = split /,\s+/, $line;
 
@@ -240,9 +240,9 @@ sub _split_label {
 
     $LAST_VALUE = $line;
 
-    chomp $line;
-
     return $line if $line =~ m!\\!;
+
+    chomp $line;
 
     $line =~ s!([])>])\s+([[(<])!$1$2!g;
     $line =~ s!((\[[^])>]+\]|\([^])>]+\)|<[^])>]+>))!$1\n!g; # '\n' already replaced by --x option
