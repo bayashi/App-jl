@@ -105,13 +105,13 @@ sub _lazyload_modules {
 }
 
 sub _process {
-    my ($self, $line) = @_;
+    my ($self, $orig_line) = @_;
 
     my $decoded = eval {
-        $self->{_json}->decode($line);
+        $self->{_json}->decode($orig_line);
     };
     if ($@) {
-        return $line;
+        return $orig_line;
     }
     else {
         $self->_recursive_process($decoded);
