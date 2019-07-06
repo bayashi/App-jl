@@ -356,7 +356,7 @@ sub _parse_opt {
         'xx'        => \$opt->{xx},
         'xxx'       => \$opt->{xxx},
         'xxxx'      => \$opt->{xxxx},
-        'xxxxx'     => \$opt->{xxxxx},
+        'X|xxxxx'   => \$opt->{xxxxx},
         'timestamp-key=s' => \$opt->{timestamp_key},
         'gmtime'    => \$opt->{gmtime},
         'g|grep=s@' => \$opt->{grep},

@@ -127,6 +127,10 @@ If you set C<xxxxx> option, then forcely convert to datetime string from integer
 
 B<NOTE> that if you set C<xxxx> option, then it means that C<x>, C<xx> and C<xxx> are enabled as well. C<xxx> is going to be enabled C<x> and C<xx> as well. So C<xx> is including C<x>.
 
+=head3 X
+
+If you set C<X> (capital X) option, it's a shortcut to work as same as C<xxxxx> option.
+
 =head3 gmtime
 
 If you set C<gmtime> flag, then unix timestamp converts date time as GMT instead of localtime.
