@@ -3,6 +3,7 @@ use strict;
 use warnings;
 use JSON qw//;
 use Sub::Data::Recursive;
+use B;
 use Getopt::Long qw/GetOptionsFromArray/;
 
 our $VERSION = '0.13';
@@ -331,16 +332,28 @@ sub _recursive_decode_json {
         if ($self->{_depth} > 0) {
             my $orig = $_[0];
             return if $orig =~ m!^\[\d+\]$!;
-            my $decoded = eval {
-                $self->{_json}->decode($orig);
-            };
-            if (!$@) {
-                $self->{_depth}--;
-                $_[0] = $decoded;
-                $self->_recursive_decode_json($_[0]); # recursive calling
+            if (!_is_number($_[0])) {
+                my $decoded = eval {
+                    $self->{_json}->decode($orig);
+                };
+                if (!$@) {
+                    $_[0] = $decoded;
+                    $self->{_depth}--;
+                    $self->_recursive_decode_json($_[0]); # recursive calling
+                }
             }
         }
     } => $hash);
+}
+
+# copied from Data::Recursive::Encode
+sub _is_number {
+    my $value = shift;
+    return 0 unless defined $value;
+
+    my $b_obj = B::svref_2object(\$value);
+    my $flags = $b_obj->FLAGS;
+    return $flags & ( B::SVp_IOK | B::SVp_NOK ) && !( $flags & B::SVp_POK ) ? 1 : 0;
 }
 
 sub _parse_opt {
