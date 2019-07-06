@@ -155,6 +155,8 @@ sub _recursive_process {
 sub _recursive_pre_process {
     my ($self, $decoded) = @_;
 
+    $INVOKER->invoke(\&_trim => $decoded);
+
     $self->_invoker(\&_split_lf => $decoded) if $self->opt('x');
 }
 
