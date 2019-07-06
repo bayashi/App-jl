@@ -143,10 +143,6 @@ If set C<grep> option with regexp, filtering JSON which is matched regexp.
 
 If set C<ignore> option with regexp, filtering JSON which is unmatched regexp.
 
-=head3 depth
-
-The number of recursive depth. (default: 10)
-
 =head3 no-pretty
 
 If set C<no-pretty> option, then output JSON is not prettify. (default: false, Do prettify)

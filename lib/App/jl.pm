@@ -8,7 +8,7 @@ use Getopt::Long qw/GetOptionsFromArray/;
 
 our $VERSION = '0.13';
 
-my $MAX_DEPTH = 10;
+my $MAX_RECURSIVE_CALL = 255;
 
 my $MAYBE_UNIXTIME = join '|', (
     'create',
@@ -146,7 +146,7 @@ sub _recursive_process {
 
     $self->_recursive_pre_process($decoded);
 
-    $self->{_depth} = $self->opt('depth');
+    $self->{_recursive_call} = $MAX_RECURSIVE_CALL;
     $self->_recursive_decode_json($decoded);
 
     $self->_recursive_post_process($decoded);
@@ -329,7 +329,7 @@ sub _recursive_decode_json {
     my ($self, $hash) = @_;
 
     Sub::Data::Recursive->invoke(sub {
-        if ($self->{_depth} > 0) {
+        if ($self->{_recursive_call} > 0) {
             my $orig = $_[0];
             return if $orig =~ m!^\[\d+\]$!;
             if (!_is_number($_[0])) {
@@ -338,7 +338,7 @@ sub _recursive_decode_json {
                 };
                 if (!$@) {
                     $_[0] = $decoded;
-                    $self->{_depth}--;
+                    $self->{_recursive_call}--;
                     $self->_recursive_decode_json($_[0]); # recursive calling
                 }
             }
@@ -363,7 +363,6 @@ sub _parse_opt {
 
     GetOptionsFromArray(
         \@argv,
-        'depth=s'   => \$opt->{depth},
         'no-pretty' => \$opt->{no_pretty},
         'x'         => \$opt->{x},
         'xx'        => \$opt->{xx},
@@ -386,8 +385,6 @@ sub _parse_opt {
             exit 1;
         },
     ) or $class->_show_usage(2);
-
-    $opt->{depth} ||= $MAX_DEPTH;
 
     $opt->{xxxx} ||= $opt->{xxxxx};
     $opt->{xxx}  ||= $opt->{xxxx};
