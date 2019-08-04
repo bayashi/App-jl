@@ -296,8 +296,8 @@ sub _ts2date {
     my $msec           = shift || '';
 
     # 946684800 = 2000-01-01T00:00:00Z
-    if ($unix_timestamp >= 946684800) {
-        if ($unix_timestamp > 2**31 -1) {
+    if ($unix_timestamp >= 946684800 && $unix_timestamp <= ((2**32 - 1) * 1000)) {
+        if ($unix_timestamp > 2**32 -1) {
             ($msec) = ($unix_timestamp =~ m!(\d\d\d)$!);
             $msec = ".$msec";
             $unix_timestamp = int($unix_timestamp / 1000);
