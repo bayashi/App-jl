@@ -22,6 +22,21 @@ my $MAYBE_UNIXTIME = join '|', (
     'when',
 );
 
+my $LOG_LEVEL_STRINGS = join '|', (
+    'debug',
+    'trace',
+    'info',
+    'notice',
+    'warn',
+    'error',
+    'crit(?:ical)?',
+    'fatal',
+    'emerg(?:ency)?',
+);
+
+my $L_BRACKET = '[  \\( \\[ \\{ \\<  ]';
+my $R_BRACKET = '[  \\) \\] \\} \\>  ]';
+
 my $UNIXTIMESTAMP_KEY = '';
 
 my $GMTIME;
@@ -256,8 +271,15 @@ sub _split_label {
 
     chomp $line;
 
-    $line =~ s!([])>])\s+([[(<])!$1$2!g;
-    $line =~ s!((\[[^])>]+\]|\([^])>]+\)|<[^])>]+>))!$1\n!g; # '\n' already replaced by --x option
+    # remove spaces between braces
+    $line =~ s!( $R_BRACKET ) [\s\t]+ ( $R_BRACKET )!$1$2!xg;
+
+    # replace square brackets label
+    $line =~ s!( \[ [\s\t]* .+ [\s\t]* \] )!$1\n!ixg;
+
+    # replace log level labels
+    $line =~ s!( $L_BRACE ) [\s\t]* ( $LOG_LEVEL_STRINGS ) [\s\t]* ( $R_BRACE )!$1$2$3\n!ixg;
+
     my @elements = split /\n/, $line;
 
     $_[0] = \@elements if scalar @elements > 1;
