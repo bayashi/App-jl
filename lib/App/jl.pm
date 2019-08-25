@@ -278,7 +278,7 @@ sub _split_label {
     $line =~ s!( \[ [\s\t]* .+ [\s\t]* \] )!$1\n!ixg;
 
     # replace log level labels
-    $line =~ s!( $L_BRACE ) [\s\t]* ( $LOG_LEVEL_STRINGS ) [\s\t]* ( $R_BRACE )!$1$2$3\n!ixg;
+    $line =~ s!( $L_BRACKET ) [\s\t]* ( $LOG_LEVEL_STRINGS ) [\s\t]* ( $R_BRACKET )!$1$2$3\n!ixg;
 
     my @elements = split /\n/, $line;
 
