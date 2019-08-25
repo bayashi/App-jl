@@ -34,8 +34,8 @@ my $LOG_LEVEL_STRINGS = join '|', (
     'emerg(?:ency)?',
 );
 
-my $L_BRACKET = '[  \\( \\[ \\{ \\<  ]';
-my $R_BRACKET = '[  \\) \\] \\} \\>  ]';
+my $L_BRACKET = '[  \\( \\{ \\<  ]';
+my $R_BRACKET = '[  \\) \\} \\>  ]';
 
 my $UNIXTIMESTAMP_KEY = '';
 
