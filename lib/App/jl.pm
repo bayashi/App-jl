@@ -6,7 +6,7 @@ use Sub::Data::Recursive;
 use B;
 use Getopt::Long qw/GetOptionsFromArray/;
 
-our $VERSION = '0.15';
+our $VERSION = '0.16';
 
 my $MAX_RECURSIVE_CALL = 255;
 
@@ -473,7 +473,7 @@ The main routine
 
 =begin html
 
-<a href="https://github.com/bayashi/App-jl/blob/master/LICENSE"><img src="https://img.shields.io/badge/LICENSE-Artistic-GREEN.png"></a> <a href="http://travis-ci.org/bayashi/App-jl"><img src="https://secure.travis-ci.org/bayashi/App-jl.png?_t=1564893921"/></a> <a href="https://coveralls.io/r/bayashi/App-jl"><img src="https://coveralls.io/repos/bayashi/App-jl/badge.png?_t=1564893921&branch=master"/></a>
+<a href="https://github.com/bayashi/App-jl/blob/master/LICENSE"><img src="https://img.shields.io/badge/LICENSE-Artistic-GREEN.png"></a> <a href="http://travis-ci.org/bayashi/App-jl"><img src="https://secure.travis-ci.org/bayashi/App-jl.png?_t=1566766313"/></a> <a href="https://coveralls.io/r/bayashi/App-jl"><img src="https://coveralls.io/repos/bayashi/App-jl/badge.png?_t=1566766313&branch=master"/></a>
 
 =end html
 
