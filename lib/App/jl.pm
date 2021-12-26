@@ -437,7 +437,7 @@ __END__
 
 =head1 NAME
 
-App::jl - Show JSON Log Nicely
+App::jl - Show the "JSON in JSON" Log Nicely
 
 
 =head1 SYNOPSIS
@@ -452,6 +452,17 @@ See L<jl> for CLI to view logs.
 =head1 DESCRIPTION
 
 App::jl is recursive JSON in JSON decoder. It makes JSON log nice.
+
+For example,
+
+    $ echo '{"foo":"{\"bar\":\"{\\\"baz\\\":123}\"}"}' | jl
+    {
+       "foo" : {
+          "bar" : {
+             "baz" : 123
+          }
+       }
+    }
 
 
 =head1 METHODS
