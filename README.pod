@@ -12,7 +12,7 @@ This is Perl module B<App::jl>.
 
 =head1 SYNOPSIS
 
-The B<jl> command allows you to show JSON log nicely. Especially, recursively decoded JSON in JSON string
+The B<jl> command allows you to show the "JSON in JSON" log nicely. Recursively decode JSON in JSON string like below
 
     $ echo '{"foo":"{\"bar\":\"{\\\"baz\\\":123}\"}"}' | jl
     {
@@ -47,7 +47,7 @@ A complecated log can be converted to nice JSON structure to treat a tool like C
        "service" : "Foo-Service"
     }
 
-Make JSON logs more readable.
+Make JSON in JSON logs more readable.
 
 
 =head1 INSTALLATION
