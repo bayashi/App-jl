@@ -1,4 +1,15 @@
-Revision history for Perl extension App::jl
+## App::jl commit log
+
+https://github.com/bayashi/App-jl/commits/main
+
+## Tags
+
+https://github.com/bayashi/App-jl/tags
+
+## Last Release
+
+0.17   Sun Dec 26 00:34:51 UTC 2021
+    - https://github.com/bayashi/Duadua/compare/0.17...0.16
 
 0.16    Mon Aug 26 06:05:44 JST 2019
         - Improve label handling

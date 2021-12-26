@@ -6,7 +6,7 @@ use Sub::Data::Recursive;
 use B;
 use Getopt::Long qw/GetOptionsFromArray/;
 
-our $VERSION = '0.16';
+our $VERSION = '0.17';
 
 my $MAX_RECURSIVE_CALL = 255;
 
@@ -484,7 +484,7 @@ The main routine
 
 =begin html
 
-<a href="https://github.com/bayashi/App-jl/blob/main/lib/App/jl.pm"><img src="https://img.shields.io/badge/Version-0.16-green?style=flat"></a> <a href="https://github.com/bayashi/App-jl/blob/main/LICENSE"><img src="https://img.shields.io/badge/LICENSE-Artistic-GREEN.png"></a> <a href="http://travis-ci.org/bayashi/App-jl"><img src="https://secure.travis-ci.org/bayashi/App-jl.png?_t=1566766313"/></a> <a href="https://coveralls.io/r/bayashi/App-jl"><img src="https://coveralls.io/repos/bayashi/App-jl/badge.png?_t=1566766313&branch=main"/></a>
+<a href="https://github.com/bayashi/App-jl/blob/main/lib/App/jl.pm"><img src="https://img.shields.io/badge/Version-0.17-green?style=flat"></a> <a href="https://github.com/bayashi/App-jl/blob/main/LICENSE"><img src="https://img.shields.io/badge/LICENSE-Artistic-GREEN.png"></a> <a href="http://travis-ci.org/bayashi/App-jl"><img src="https://secure.travis-ci.org/bayashi/App-jl.png?_t=1640478891"/></a> <a href="https://coveralls.io/r/bayashi/App-jl"><img src="https://coveralls.io/repos/bayashi/App-jl/badge.png?_t=1640478891&branch=main"/></a>
 
 =end html
 
