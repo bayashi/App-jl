@@ -502,6 +502,12 @@ Dai Okabayashi E<lt>bayashi@cpan.orgE<gt>
 
 L<jl>
 
+=head1 NOTICE
+
+There is new implementation in Go: L<https://github.com/bayashi/go-jl>
+
+This Perl version has been archived. Not maintained anymore. Please use Go version.
+
 
 =head1 LICENSE
 
