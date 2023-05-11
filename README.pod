@@ -1,13 +1,5 @@
 =encoding utf8
 
-=head1 Notice
-
-There is a new implementation in Go: https://github.com/bayashi/go-jl
-
-This Perl version has been archived. Not maintained anymore. Please use Go version.
-
------
-
 This is Perl module B<App::jl>.
 
 =begin html
@@ -81,6 +73,14 @@ There are several ways to install,
 App::jl is hosted on github
 L<http://github.com/bayashi/App-jl>
 
+
+=head1 NOTICE
+
+There is a new implementation in Go: L<https://github.com/bayashi/go-jl>
+
+This Perl version has been archived. Not maintained anymore. Please use Go version.
+
+-----
 
 =head1 LICENSE
 
