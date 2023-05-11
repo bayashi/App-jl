@@ -1,5 +1,12 @@
 =encoding utf8
 
+=head1 Notice
+
+There is a new implementation in Go: https://github.com/bayashi/go-jl
+
+This Perl version has been archived. Not maintained anymore. Please use Go version.
+
+-----
 
 This is Perl module B<App::jl>.
 
